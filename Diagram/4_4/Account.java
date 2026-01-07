@@ -1,3 +1,12 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+
+/**
+ *
+ * @author Admin
+ */
 public class Account {
     public double balance;
     public String name;
@@ -27,20 +36,4 @@ public class Account {
     public void showInfo() {
         System.out.println("In " + name + " account, there is a balance equal to " + balance + " baht. ");
     }
-}
-
-public class MyDate {
-    public int day;
-    public int month;
-    public int year;
-    
-    public void showDate() {
-        System.out.println(day + "/" + month + "/" + year);
-    }
-}
-
-public class Customer {
-    public String name;
-    public MyDate DOB;
-    public Account acct;
 }
