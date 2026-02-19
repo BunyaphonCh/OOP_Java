@@ -5,6 +5,10 @@ public class MDIFromGUI {
     private JFrame frame;
     private JDesktopPane desktopPane;
     private int openFrameCount = 0;
+    
+    private JMenuBar menuBar;
+    private JMenu mFile, mEdit, mView, mNew;
+    private JMenuItem mWindow, mMessage, mOpen, mSave, mExit;
 
     public MDIFromGUI() {
         frame = new JFrame("SubMenuItem Demo");
@@ -15,24 +19,23 @@ public class MDIFromGUI {
         desktopPane.setBackground(Color.BLACK);
         frame.add(desktopPane);
 
-        JMenuBar menuBar = new JMenuBar();
+        menuBar = new JMenuBar();
         
-        JMenu mFile = new JMenu("File");
-        JMenu mEdit = new JMenu("Edit");
-        JMenu mView = new JMenu("View");
+        mFile = new JMenu("File");
+        mEdit = new JMenu("Edit");
+        mView = new JMenu("View");
         
-        JMenu mNew = new JMenu("New");
-        JMenuItem mWindow = new JMenuItem("Window");
-        JMenuItem mMessage = new JMenuItem("Message");
-        
+        mNew = new JMenu("New");
+        mWindow = new JMenuItem("Window");
+        mMessage = new JMenuItem("Message");
         mNew.add(mWindow);
         mNew.addSeparator();
         mNew.add(mMessage);
-
-        JMenuItem mOpen = new JMenuItem("Open");
-        JMenuItem mSave = new JMenuItem("Save");
-        JMenuItem mExit = new JMenuItem("Exit");
-
+        
+        mOpen = new JMenuItem("Open");
+        mSave = new JMenuItem("Save");
+        mExit = new JMenuItem("Exit");
+        
         mFile.add(mNew);
         mFile.addSeparator();
         mFile.add(mOpen);
@@ -44,15 +47,14 @@ public class MDIFromGUI {
         menuBar.add(mFile);
         menuBar.add(mEdit);
         menuBar.add(mView);
+        
         frame.setJMenuBar(menuBar);
-
+        
         mWindow.addActionListener(e -> {
             openFrameCount++;
             createInternalFrame();
         });
-
         mExit.addActionListener(e -> System.exit(0));
-
         frame.setVisible(true);
     }
 
