@@ -1,87 +1,68 @@
-import javax.swing.*;
 import java.awt.*;
-
+import javax.swing.*;
 public class MDIFromGUI {
-    private JFrame frame;
+    private JFrame fr;
+    private JMenuBar mb;
+    private JMenu m1, m2, m3, ms1;
+    private JMenuItem mi1, mi2, mi3, msi1, msi2;
     private JDesktopPane desktopPane;
-    private int openFrameCount = 0;
-    
-    private JMenuBar menuBar;
-    private JMenu mFile, mEdit, mView, mNew;
-    private JMenuItem mWindow, mMessage, mOpen, mSave, mExit;
+    private JInternalFrame frame1, frame2, frame3;
 
     public MDIFromGUI() {
-        frame = new JFrame("SubMenuItem Demo");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
-        
+        fr = new JFrame("SubMenuItem Demo");
         desktopPane = new JDesktopPane();
         desktopPane.setBackground(Color.BLACK);
-        frame.add(desktopPane);
 
-        menuBar = new JMenuBar();
-        
-        mFile = new JMenu("File");
-        mEdit = new JMenu("Edit");
-        mView = new JMenu("View");
-        
-        mNew = new JMenu("New");
-        mWindow = new JMenuItem("Window");
-        mMessage = new JMenuItem("Message");
-        mNew.add(mWindow);
-        mNew.addSeparator();
-        mNew.add(mMessage);
-        
-        mOpen = new JMenuItem("Open");
-        mSave = new JMenuItem("Save");
-        mExit = new JMenuItem("Exit");
-        
-        mFile.add(mNew);
-        mFile.addSeparator();
-        mFile.add(mOpen);
-        mFile.addSeparator();
-        mFile.add(mSave);
-        mFile.addSeparator();
-        mFile.add(mExit);
-        
-        menuBar.add(mFile);
-        menuBar.add(mEdit);
-        menuBar.add(mView);
-        
-        frame.setJMenuBar(menuBar);
-        
-        mWindow.addActionListener(e -> {
-            openFrameCount++;
-            createInternalFrame();
-        });
-        mExit.addActionListener(e -> System.exit(0));
-        frame.setVisible(true);
-    }
+        mb = new JMenuBar();
+        m1 = new JMenu("File");
+        m2 = new JMenu("Edit");
+        m3 = new JMenu("View");
+        fr.setJMenuBar(mb);
+        mb.add(m1);
+        mb.add(m2);
+        mb.add(m3);
 
-    private void createInternalFrame() {
-
-        String title = String.format("Application %02d", openFrameCount);
-
-        JInternalFrame iframe = new JInternalFrame(title, true, true, true, true);
+        ms1 = new JMenu("New");
+        mi1 = new JMenuItem("Open");
+        mi2 = new JMenuItem("Save");
+        mi3 = new JMenuItem("Exit");
         
-        iframe.setSize(300, 200);
-        iframe.setLocation(20 * openFrameCount, 20 * openFrameCount); 
-        iframe.setVisible(true);
-        
-        desktopPane.add(iframe);
-        try {
-            iframe.setSelected(true);
-        } catch (java.beans.PropertyVetoException e) {}
-    }
+        m1.add(ms1);
+        m1.add(mi1);
+        m1.addSeparator();
+        m1.add(mi2);
+        m1.addSeparator();
+        m1.add(mi3);
 
-    public static void main(String[] args) {
-        try {
+        msi1 = new JMenuItem("Window");
+        msi2 = new JMenuItem("Message");
+        ms1.add(msi1);
+        ms1.addSeparator();
+        ms1.add(msi2);
 
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-        new MDIFromGUI();
+        frame1 = new JInternalFrame("Application 01", true, true, true, true); // ยืดหดขนาดได้, ปิดได้, ขยายเต็มจอได้, และย่อลงแถบงานได้
+        frame2 = new JInternalFrame("Application 02", true, true, true, true);
+        frame3 = new JInternalFrame("Application 03", true, true, true, true);
+
+        frame1.setSize(250, 150);
+        frame1.setLocation(50, 400);
+        frame1.setVisible(true);
+
+        frame2.setSize(250, 180);
+        frame2.setLocation(230, 80);
+        frame2.setVisible(true);
+
+        frame3.setSize(350, 250);
+        frame3.setLocation(500, 300);
+        frame3.setVisible(true);
+
+        desktopPane.add(frame1);
+        desktopPane.add(frame2);
+        desktopPane.add(frame3);
+
+        fr.add(desktopPane);
+        fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        fr.setSize(900, 700);
+        fr.setVisible(true);
     }
 }
