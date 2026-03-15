@@ -1,44 +1,38 @@
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 public class CalculatorOneGUI {
-    private JFrame frame;
-    private JTextField num1, num2, result;
-    private JPanel buttonPanel;
-    private JButton btnPlus, btnMinus, btnMultiply, btnDivide;
-    
+
+    private JFrame fr;
+    private JTextField num1, num2, num3, ans;
+    private JPanel opers;
+    private JButton b1, b2, b3, b4;
+
     public CalculatorOneGUI() {
-        frame = new JFrame("เครื่องคิดเลข");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 200);
-        
-        frame.setLayout(new GridLayout(4,1));
-        
+        fr = new JFrame("เครื่องคิดเลข");
         num1 = new JTextField();
         num2 = new JTextField();
-        result = new JTextField();
-        result.setEditable(false);
-        
-        buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout());
-        
-        btnPlus = new JButton("บวก");
-        btnMinus = new JButton("ลบ");
-        btnMultiply = new JButton("คูณ");
-        btnDivide = new JButton("หาร");
-        
-        buttonPanel.add(btnPlus);
-        buttonPanel.add(btnMinus);
-        buttonPanel.add(btnMultiply);
-        buttonPanel.add(btnDivide);
-        
-        frame.add(num1);
-        frame.add(num2);
-        frame.add(buttonPanel);
-        frame.add(result);
-        frame.setVisible(true);
-    }
-    public static void main(String[] args) {
-        new CalculatorOneGUI();
+        ans = new JTextField();
+        opers = new JPanel();
+
+        fr.setLayout(new GridLayout(4, 1));
+        fr.add(num1);
+        fr.add(num2);
+        fr.add(opers);
+        fr.add(ans);
+
+        b1 = new JButton("บวก");
+        b2 = new JButton("ลบ");
+        b3 = new JButton("คูณ");
+        b4 = new JButton("หาร");
+        opers.setLayout(new FlowLayout());
+        opers.add(b1);
+        opers.add(b2);
+        opers.add(b3);
+        opers.add(b4);
+
+        fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        fr.setSize(350, 175);
+        fr.setVisible(true);
     }
 }
