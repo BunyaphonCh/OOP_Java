@@ -1,133 +1,144 @@
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import javax.swing.*;
 
-public class StudentView extends JFrame {
-    private JTextField idField, nameField;
-    private JLabel moneyLabel;
-    private JButton depositBtn, withdrawBtn;
-    private Student student;
-    private String filePath = "StudentM.dat";
+public class StudentView implements ActionListener ,WindowListener{
+    private JFrame fr;
+    private JTextField id,name,money;
+    private JLabel idLabel,nameLabel ,moneyLabel;
+    private JButton deposit , withdraw;
+    private JPanel idpanel, namepanel,moneypanel,button;
     
-    public StudentView() {
-        setTitle("StudentProfile");
-        setSize(400, 250);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+    public StudentView(){
+        fr =  new JFrame("Student view");
+        id = new JTextField();
+        name = new JTextField();
+        money = new JTextField("0");
+        idLabel = new JLabel("    ID :");
+        nameLabel = new JLabel("    Name :");
+        moneyLabel = new JLabel("    Money :");
+        deposit = new JButton("Deposit");
+        withdraw = new JButton("Withdraw");
+        idpanel = new JPanel();
+        namepanel = new JPanel();
+        moneypanel = new JPanel();
+        button = new JPanel();
         
-        JLabel idLbl = new JLabel("ID:");
-        idField = new JTextField(20);
+        fr.setSize(300,500);
         
-        JLabel nameLbl = new JLabel("Name:");
-        nameField = new JTextField(20);
+        idpanel.setLayout(new GridLayout(1,2));
+        idpanel.add(idLabel);
+        idpanel.add(id);
         
-        JLabel moneyLbl = new JLabel("Money:");
-        moneyLabel = new JLabel("0");  // ✅ moneyLabel (ไม่ moneyLbl)
+        namepanel.setLayout(new GridLayout(1,2));
+        namepanel.add(nameLabel);
+        namepanel.add(name);
         
-        depositBtn = new JButton("Deposit");
-        withdrawBtn = new JButton("Withdraw");
+        moneypanel.setLayout(new GridLayout(1,2));
+        money.setEditable(false);
+        moneypanel.add(moneyLabel);
+        moneypanel.add(money);
         
-        depositBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                depositMoney();
+        button.add(deposit);
+        button.add(withdraw);
+        
+        fr.setLayout(new GridLayout(4,1));
+        fr.add(idpanel);
+        fr.add(namepanel);
+        fr.add(moneypanel);
+        fr.add(button);
+        
+        File f = new File("StudentM.dat");
+        
+        if(f.exists()){
+            
+            try{
+                FileInputStream fis = new FileInputStream(f);
+                try (ObjectInputStream ois = new ObjectInputStream(fis)) {
+                    Student s = (Student) ois.readObject();
+                    
+                    name.setText(s.getName());
+                    id.setText(String.valueOf(s.getID()));
+                    money.setText(String.valueOf(s.getMoney()));
+                }
             }
-        });
-        
-        withdrawBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                withdrawMoney();
+            catch(IOException | ClassNotFoundException ex){
+                    ex.printStackTrace();
             }
-        });
-        
-        JPanel mainPanel = new JPanel(new GridLayout(4, 2, 10, 10));
-        mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        mainPanel.add(idLbl);
-        mainPanel.add(idField);
-        mainPanel.add(nameLbl);
-        mainPanel.add(nameField);
-        mainPanel.add(moneyLbl);
-        mainPanel.add(moneyLabel);  // ✅ moneyLabel
-        mainPanel.add(depositBtn);
-        mainPanel.add(withdrawBtn);
-        add(mainPanel);
-        
-        loadStudentData();
-        
-        setVisible(true);
-    }
-    
-    private void loadStudentData() {
-        try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
-            student = (Student) ois.readObject();
-            updateUI();
-        } catch(IOException | ClassNotFoundException e) {
-            student = new Student();
         }
+        
+        deposit.addActionListener(this);
+        withdraw.addActionListener(this);
+        
+        fr.addWindowListener(this);
+        
+        fr.pack();
+        fr.setVisible(true);
+        fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
-    private void saveStudentData() {
-        try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
-            oos.writeObject(student);
-        } catch (IOException e) {
-            e.printStackTrace();
+    @Override
+    public void actionPerformed(ActionEvent e){
+        int m = Integer.parseInt(money.getText());
+        if (e.getSource() == deposit) {
+            m = m +100;
         }
+        else{
+            if (m >= 100) {
+                m = m - 100;
+            }
+            else{
+                JOptionPane.showMessageDialog(fr,"Not enough money");
+            }
+        }
+        
+        money.setText(String.valueOf(m));
     }
     
-    private void depositMoney() {
-        try {
-            int id = Integer.parseInt(idField.getText());
-            String name = nameField.getText();
-            
-            if (name.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please enter name");
-                return;
+    @Override
+    public void windowOpened(WindowEvent e) {
+    }
+
+    @Override
+    public void windowClosing(WindowEvent e) {
+        try{
+            FileOutputStream fos = new FileOutputStream("StudentM.dat");
+            try (ObjectOutputStream oss = new ObjectOutputStream(fos)) {
+                Student s = new Student(
+                        name.getText(),
+                        Integer.parseInt(id.getText()),
+                        Integer.parseInt(money.getText())
+                );
+                
+                oss.writeObject(s);
             }
             
-            student.setID(id);
-            student.setName(name);
-            student.deposit(100);
-            
-            saveStudentData();
-            updateUI();
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Please enter valid ID");
         }
+        
+        catch(IOException ex){
+            System.out.println(ex);
+    }
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+    }
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+    }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {
     }
     
-    private void withdrawMoney() {
-        try {
-            int id = Integer.parseInt(idField.getText());
-            String name = nameField.getText();
-            
-            if (name.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Please enter name");
-                return;
-            }
-            
-            student.setID(id);
-            student.setName(name);
-            
-            if (student.withdraw(100)) {
-                saveStudentData();
-                updateUI();
-            } else {
-                JOptionPane.showMessageDialog(this, "Not enough money");
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Please enter valid ID");
-        }
-    }
-    
-    private void updateUI() {
-        idField.setText(String.valueOf(student.getID()));
-        nameField.setText(student.getName());
-        moneyLabel.setText(String.valueOf(student.getMoney()));
-    }
-    
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new StudentView());
-    }
 }

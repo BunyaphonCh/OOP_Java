@@ -1,109 +1,103 @@
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import javax.swing.*;
 
-public class ChatDemo extends JFrame {
+public class ChatDemo implements ActionListener{
+
+    private JFrame fr;
     private JTextArea textArea;
     private JTextField textField;
-    private JButton submitBtn, resetBtn;
-    private String filePath = "ChatDemo.dat";
-    
-    public ChatDemo() {
-        setTitle("ChatDemo");
-        setSize(600, 500);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        
-        textArea = new JTextArea(20, 45);
-        textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea);
-        
+    private JPanel panel , btnpanel;
+    private JButton sub , re;
+
+    public ChatDemo(){
+
+        fr = new JFrame();
+        textArea = new JTextArea(20 , 45);
         textField = new JTextField(45);
-        textField.setPreferredSize(new Dimension(500, 35));
-        
-        submitBtn = new JButton("Submit");
-        resetBtn = new JButton("Reset");
-        
-        submitBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                submitMessage();
+        panel = new JPanel();
+        btnpanel = new JPanel();
+        sub = new JButton("Submit");
+        re = new JButton("Reset");
+
+        textArea.setEditable(false);
+
+        fr.setLayout(new BorderLayout());
+        fr.add(new JScrollPane(textArea), BorderLayout.CENTER);
+
+        panel.setLayout(new GridLayout(2 , 1));
+        panel.add(textField);
+        panel.add(btnpanel);
+
+        btnpanel.setLayout(new FlowLayout());
+        btnpanel.add(sub);
+        btnpanel.add(re);
+
+        fr.add(panel, BorderLayout.SOUTH);
+
+        sub.addActionListener(this);
+        re.addActionListener(this);
+
+        try{
+            File f = new File("ChatDemo.dat");
+
+            if(f.exists()){
+                BufferedReader br = new BufferedReader(new FileReader(f));
+                String line;
+
+                while((line = br.readLine()) != null){
+                    textArea.append(line + "\n");
+                }
+
+                br.close();
             }
-        });
-        
-        resetBtn.addActionListener(new ActionListener()  {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                resetMessage();
-            }
-        });
-        
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(submitBtn);
-        buttonPanel.add(resetBtn);
-        
-        JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.add(textField, BorderLayout.NORTH);
-        bottomPanel.add(buttonPanel, BorderLayout.SOUTH);
-        
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.add(scrollPane, BorderLayout.CENTER);
-        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
-        
-        setContentPane(mainPanel);
-        
-        loadChatHistory();
-        
-        setVisible(true);
-    }
-    
-    private void loadChatHistory() {
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                textArea.append(line + "\n");
-            }
-        } catch (IOException e) {
-            
-        }
-    }
-    
-    private void submitMessage() {
-        String message = textField.getText();
-        
-        if (message.isEmpty()) {
-            return;
-        }
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-        String timeStamp = LocalDateTime.now().format(dtf);
-        String fullMessage = timeStamp + " " + message;
-        textArea.append(fullMessage + "\n");
-        saveChatHistory(fullMessage);
-        textField.setText("");
-    }
-    
-    private void saveChatHistory(String message) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
-            writer.write(message);
-            writer.newLine();
-        } catch (IOException e) {
+        }catch(Exception e){
             e.printStackTrace();
         }
+
+        fr.addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent e){
+
+                try{
+                    BufferedWriter bw = new BufferedWriter(new FileWriter("ChatDemo.dat"));
+                    bw.write(textArea.getText());
+                    bw.close();
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
+
+                System.exit(0);
+            }
+        });
+
+        fr.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        fr.pack();
+        fr.setVisible(true);
     }
-    
-    private void resetMessage() {
-        textArea.setText("");
-        textField.setText("");
-        File file = new File(filePath);
-        if (file.exists()) {
-            file.delete();
+
+    public void actionPerformed(ActionEvent e){
+
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+
+        if(e.getSource() == sub){
+
+            String msg = textField.getText();
+
+            textArea.append(dtf.format(LocalDateTime.now()) + " : " + msg + "\n");
+
+            textField.setText("");
+        }
+
+        if(e.getSource() == re){
+
+            textArea.setText("");
         }
     }
+
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new ChatDemo());
+        new ChatDemo();
     }
-    
 }
