@@ -1,109 +1,69 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import javax.swing.border.EmptyBorder;
+public class TellerGUI {
+    private JFrame fr;
+    private JPanel pTop, pCen, pBot, p;
+    private JLabel lbBa, lbAm;
+    private JTextField txt1, txt2;
+    private JButton bDe, bWi, bEx;
+    double balance = 6000;
+    
+    public TellerGUI() {
+        fr = new JFrame("Teller GUI");
+        fr.setLayout(new GridLayout(4,1));
+        
+        pTop = new JPanel();
+        pTop.setLayout(new GridLayout(1,2));
+        lbBa = new JLabel("Balance");
+        txt1 = new JTextField("6000");
+        txt1.setEditable(false);
+        pTop.add(lbBa);
+        pTop.add(txt1);
+        
+        pCen = new JPanel();
+        pCen.setLayout(new GridLayout(1,2));
+        lbAm = new JLabel("Amount");
+        txt2 = new JTextField();
+        pCen.add(lbAm);
+        pCen.add(txt2);
+        
 
-class Account {
-    private double balance;
-    public Account(double balance) {
-        this.balance = balance;
+        pBot = new JPanel();
+        pBot.setLayout(new FlowLayout());
+        bDe = new JButton("Deposit");
+        bWi = new JButton("Withdraw");
+        bEx = new JButton("Exit");
+        pBot.add(bDe);
+        pBot.add(bWi);
+        pBot.add(bEx);
+        
+        p = new JPanel();
+        
+        TellerHandler handler = new TellerHandler(this);
+        bDe.addActionListener(handler);
+        bWi.addActionListener(handler);
+        bEx.addActionListener(handler);
+        
+        fr.add(pTop);
+        fr.add(pCen);
+        fr.add(pBot);
+        fr.add(p);
+        
+        fr.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        fr.setSize(260,200);
+        fr.setVisible(true);
     }
     public double getBalance() {
         return balance;
     }
-    public void deposit(double amount) {
-        balance += amount;
+    public void setBalance(double balance) {
+        this.balance = balance;
+        txt1.setText(String.valueOf(balance));
     }
-    public void withdraw(double amount) {
-        if (balance >= amount) balance -= amount;
+    public String getAmountText() {
+        return txt2.getText();
     }
-}
-
-public class TellerGUI implements ActionListener {
-    private JFrame frame;
-    private JPanel mainPanel, p1, p2, p3;
-    private JTextField txtBalance, txtAmount;
-    private JButton btnDeposit, btnWithdraw, btnExit;
-    private JLabel lblBalance, lblAmount;
-    
-    private Account myAccount;
-    
-    public TellerGUI() {
-        myAccount = new Account(6000);
-        frame = new JFrame("Teller GUI");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(300, 200);
-        frame.setLayout(new BorderLayout());
-        
-        mainPanel = new JPanel(new GridLayout(4, 1, 5, 5));
-        mainPanel.setBorder(new EmptyBorder(10, 10, 20, 10));
-        
-        p1 = new JPanel(new GridLayout(1, 2));
-        lblBalance = new JLabel("Balance");
-        txtBalance = new JTextField(String.valueOf(myAccount.getBalance()));
-        txtBalance.setEditable(false);
-        p1.add(lblBalance);
-        p1.add(txtBalance);
-        mainPanel.add(p1);
-        
-        p2 = new JPanel(new GridLayout(1,2));
-        lblAmount = new JLabel("Amount");
-        txtAmount = new JTextField();
-        p2.add(lblAmount);
-        p2.add(txtAmount);
-        mainPanel.add(p2);
-        
-        p3 = new JPanel(new GridLayout(1, 3, 5, 0));
-        btnDeposit = new JButton("Deposit");
-        btnWithdraw = new JButton("Withdraw");
-        btnExit = new JButton("Exit");
-        
-        btnDeposit.addActionListener(this);
-        btnWithdraw.addActionListener(this);
-        btnExit.addActionListener(this);
-        
-        p3.add(btnDeposit);
-        p3.add(btnWithdraw);
-        p3.add(btnExit);
-        mainPanel.add(p3);
-        
-        mainPanel.add(new JLabel(""));
-        frame.add(mainPanel);
-        btnExit.addActionListener(e -> System.exit(0));
-        frame.setVisible(true);
-    }
-    
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        double amount = 0;
-        try {
-            amount = Double.parseDouble(txtAmount.getText());
-        } catch (NumberFormatException ex) {
-            
-        }
-        if (e.getSource() == btnDeposit) {
-            myAccount.deposit(amount);
-            txtBalance.setText(String.valueOf(myAccount.getBalance()));
-        } else if (e.getSource() == btnWithdraw) {
-            if (myAccount.getBalance() >= amount) {
-                myAccount.withdraw(amount);
-                txtBalance.setText(String.valueOf(myAccount.getBalance()));
-            }
-        } else if (e.getSource() == btnExit) {
-            System.exit(0);
-        }
-        txtAmount.setText("");
-    }
-    
-    public static void main(String[] args) {
-        try 
-        {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        }
-        catch (Exception e) 
-        {
-            e.printStackTrace();
-        }
-        new TellerGUI();
+    public void clear() {
+        txt2.setText("");
     }
 }
